@@ -89,7 +89,7 @@ npm -v
 
 ```bash
 cd /home/$USER
-git clone https://github.com/TUO-USERNAME/PiBoost-Raspberry.git
+git clone https://github.com/oTSTo/PiBoost-Raspberry.git
 cd PiBoost-Raspberry
 ```
 
