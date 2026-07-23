@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Verifica owner · PiBoost</title>
+  <link rel="stylesheet" href="./assets/owner-auth.css?v=4.1.0">
+</head>
+<body>
+  <main class="owner-auth-shell">
+    <section class="owner-auth-card" aria-labelledby="ownerAuthTitle">
+      <div class="owner-auth-brand"><span class="brand-mark" aria-hidden="true"></span><div><strong>PiBoost</strong><small>Owner Security</small></div></div>
+      <div class="security-icon" aria-hidden="true"><span>◆</span></div>
+      <p class="eyebrow">AREA RISERVATA</p>
+      <h1 id="ownerAuthTitle">Conferma l’identità owner</h1>
+      <p id="ownerAuthDescription" class="description">Verifico il tuo account Steam e la passkey registrata per il pannello amministrativo.</p>
+
+      <div class="security-summary">
+        <div><span>Account Steam</span><strong id="steamCheck">Verifica…</strong></div>
+        <div><span>Passkey</span><strong id="passkeyCheck">Verifica…</strong></div>
+        <div><span>Destinazione</span><strong>/steamboost/admin</strong></div>
+      </div>
+
+      <div id="ownerAuthNotice" class="notice" role="status" aria-live="polite">Controllo della sessione in corso…</div>
+
+      <button id="passkeyBtn" class="primary-btn" type="button" disabled>Continua</button>
+      <a class="back-link" href="./">← Torna alla dashboard</a>
+
+      <p class="privacy-note">La passkey usa Windows Hello, il PIN, l’impronta o il metodo sicuro del dispositivo. PiBoost non riceve né salva il tuo dato biometrico.</p>
+    </section>
+  </main>
+  <script src="./assets/owner-auth.js?v=4.1.0" defer></script>
+</body>
+</html>

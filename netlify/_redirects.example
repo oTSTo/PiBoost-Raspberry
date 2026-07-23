@@ -1,0 +1,5 @@
+# Sostituisci il dominio Tailscale con il tuo.
+# Inserisci queste regole prima di una regola SPA generica.
+
+/steamboost      https://NOME-DISPOSITIVO.NOME-TAILNET.ts.net/steamboost/       200!
+/steamboost/*    https://NOME-DISPOSITIVO.NOME-TAILNET.ts.net/steamboost/:splat 200!

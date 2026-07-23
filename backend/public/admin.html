@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>PiBoost Owner Admin</title>
+  <link rel="stylesheet" href="./assets/admin.css?v=4.1.0">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="brand"><span class="brand-mark"></span><div><strong>PiBoost</strong><small>Owner Console</small></div></div>
+      <nav>
+        <button class="nav-btn active" data-view="overview" type="button">▣ <span>Panoramica</span></button>
+        <button class="nav-btn" data-view="accounts" type="button">◉ <span>Utenti</span></button>
+        <button class="nav-btn" data-view="security" type="button">◆ <span>Sicurezza</span></button>
+        <button class="nav-btn" data-view="audit" type="button">☷ <span>Registro</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="owner-card"><span class="owner-dot"></span><div><strong id="ownerName">Owner</strong><small id="ownerSteamId">SteamID64</small></div></div>
+        <a id="backToPiBoostBtn" class="sidebar-link" href="./">← Torna a PiBoost</a>
+        <button id="ownerLogoutBtn" class="sidebar-link danger" type="button">Esci dal pannello</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="topbar">
+        <div><span class="eyebrow">ACCESSO RISERVATO OWNER</span><h1 id="viewTitle">Panoramica</h1></div>
+        <div class="top-actions"><span id="lastRefresh">—</span><button id="refreshBtn" class="btn" type="button">↻ Aggiorna</button></div>
+      </header>
+
+      <div id="notice" class="notice hidden" role="status"></div>
+
+      <section id="overviewView" class="view">
+        <div class="metric-grid">
+          <article class="metric"><span>Account registrati</span><strong id="metricAccounts">0</strong><small id="metricOnline">0 online</small></article>
+          <article class="metric"><span>Boost attivi</span><strong id="metricBoosts">0</strong><small id="metricGames">0 giochi attivi</small></article>
+          <article class="metric"><span>Temperatura</span><strong id="metricTemp">—</strong><small>Raspberry Pi</small></article>
+          <article class="metric"><span>Versione</span><strong id="metricVersion">—</strong><small id="metricUptime">Uptime —</small></article>
+        </div>
+
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head"><div><span class="eyebrow">RASPBERRY PI</span><h2>Stato sistema</h2></div><span id="systemBadge" class="status-badge ok">Online</span></div>
+            <div class="system-list">
+              <div><span>CPU</span><strong id="systemCpu">—</strong><i><b id="systemCpuBar"></b></i></div>
+              <div><span>RAM</span><strong id="systemRam">—</strong><i><b id="systemRamBar"></b></i></div>
+              <div><span>Disco</span><strong id="systemDisk">—</strong><i><b id="systemDiskBar"></b></i></div>
+              <div><span>Node.js</span><strong id="systemNode">—</strong></div>
+              <div><span>Indirizzi</span><strong id="systemAddresses">—</strong></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><div><span class="eyebrow">CONTROLLO SERVIZIO</span><h2>Manutenzione</h2></div><label class="switch"><input id="maintenanceEnabled" type="checkbox"><span></span></label></div>
+            <label class="field"><span>Messaggio mostrato agli utenti</span><textarea id="maintenanceMessage" maxlength="240" rows="3"></textarea></label>
+            <label class="check-row"><input id="maintenanceStopBoosts" type="checkbox"><span>Ferma tutti i boost quando attivo la manutenzione</span></label>
+            <button id="saveMaintenanceBtn" class="btn primary" type="button">Salva manutenzione</button>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head"><div><span class="eyebrow">ATTIVITÀ LIVE</span><h2>Boost attivi</h2></div><span id="activeBoostCount" class="soft-badge">0</span></div>
+          <div id="activeBoostList" class="boost-list"><div class="empty">Nessun boost attivo.</div></div>
+        </section>
+      </section>
+
+      <section id="accountsView" class="view hidden">
+        <section class="panel">
+          <div class="panel-head accounts-head"><div><span class="eyebrow">MULTIUTENTE</span><h2>Account Steam</h2></div><label class="search"><span>⌕</span><input id="accountSearch" type="search" placeholder="Cerca nome, SteamID o stato"></label></div>
+          <div id="accountsList" class="accounts-list"></div>
+        </section>
+      </section>
+
+      <section id="securityView" class="view hidden">
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head"><div><span class="eyebrow">IDENTITÀ</span><h2>Owner autorizzato</h2></div><span class="status-badge ok">Verificato</span></div>
+            <dl class="definition-list">
+              <div><dt>SteamID64 owner</dt><dd id="securitySteamId">—</dd></div>
+              <div><dt>Sessione inattiva</dt><dd id="securityIdle">30 minuti</dd></div>
+              <div><dt>Durata massima</dt><dd id="securityAbsolute">8 ore</dd></div>
+              <div><dt>Cookie</dt><dd>HttpOnly · SameSite Strict</dd></div>
+              <div><dt>Passkey registrate</dt><dd id="securityPasskeys">—</dd></div>
+              <div><dt>Ultimo uso passkey</dt><dd id="securityPasskeyLastUsed">—</dd></div>
+              <div><dt>Protezione API</dt><dd>SteamID64 + passkey + CSRF</dd></div>
+            </dl>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><div><span class="eyebrow">COMPORTAMENTO</span><h2>Accesso amministrativo</h2></div></div>
+            <ol class="security-steps">
+              <li>Accedi normalmente a PiBoost con l’account Steam owner.</li>
+              <li>Il backend confronta lo SteamID64 con <code>OWNER_STEAM_ID64</code>.</li>
+              <li>Windows Hello, impronta, PIN o passkey verificano il secondo fattore.</li>
+              <li>Solo dopo la passkey l’owner riceve la sessione amministrativa protetta.</li>
+              <li>Gli altri utenti che aprono <code>/admin</code> tornano alla dashboard.</li>
+            </ol>
+          </section>
+        </div>
+      </section>
+
+      <section id="auditView" class="view hidden">
+        <section class="panel">
+          <div class="panel-head"><div><span class="eyebrow">SICUREZZA E OPERAZIONI</span><h2>Registro amministrativo</h2></div><span id="auditCount" class="soft-badge">0</span></div>
+          <div id="auditList" class="audit-list"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="accountDrawer" class="drawer-backdrop hidden">
+    <aside class="drawer" aria-label="Dettagli account">
+      <header class="drawer-head"><div><span class="eyebrow">DETTAGLI UTENTE</span><h2 id="drawerTitle">Account</h2></div><button id="closeDrawerBtn" class="icon-btn" type="button" aria-label="Chiudi">×</button></header>
+      <div id="drawerBody" class="drawer-body"><div class="empty">Caricamento…</div></div>
+    </aside>
+  </div>
+
+  <div id="confirmDialog" class="dialog-backdrop hidden">
+    <div class="dialog"><h2 id="confirmTitle">Conferma</h2><p id="confirmText"></p><div class="dialog-actions"><button id="confirmCancelBtn" class="btn" type="button">Annulla</button><button id="confirmOkBtn" class="btn danger" type="button">Conferma</button></div></div>
+  </div>
+
+  <div id="pageTransition" class="page-transition" aria-hidden="true">
+    <div class="page-transition-card" role="status" aria-live="polite">
+      <span class="page-transition-mark" aria-hidden="true"></span>
+      <div><strong>PiBoost</strong><small id="pageTransitionText">Ritorno alla dashboard…</small></div>
+    </div>
+  </div>
+
+  <script src="./assets/admin.js?v=4.1.0" defer></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+PIBOOST RASPBERRY 4.1.0 — RELEASE GITHUB
+
+1. Leggi README.md.
+2. Sul Raspberry installa Git, Node.js 20+ e npm.
+3. Clona il repository.
+4. Esegui:
+
+   chmod +x *.sh backend/scripts/*.sh
+   sudo ./INSTALLA.sh
+
+5. Controlla:
+
+   sudo systemctl status piboost --no-pager
+   curl -s http://127.0.0.1:3000/api/health
+
+6. Per pubblicarlo su Internet usa Tailscale Funnel:
+
+   sudo tailscale funnel --bg 3000
+   sudo tailscale funnel status
+
+NON pubblicare mai /opt/piboost/.env o /opt/piboost/data.

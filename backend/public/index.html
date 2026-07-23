@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>PiBoost · Steam Hour Booster</title>
+  <link rel="stylesheet" href="/steamboost/assets/app.css?v=4.1.0">
+</head>
+<body class="login-active">
+  <section id="loginScreen" class="login-screen">
+    <div class="login-orb login-orb-one"></div>
+    <div class="login-orb login-orb-two"></div>
+    <div id="loginLayout" class="login-layout">
+      <div class="login-hero">
+        <div class="login-brand"><span class="logo logo-large"></span><span>PiBoost</span></div>
+        <div class="hero-kicker-row"><div class="hero-kicker">RASPBERRY PI · MULTIUTENTE</div><div class="hero-live"><span></span> SERVER ONLINE</div></div>
+        <h1>La tua libreria Steam,<br><span>sempre pronta.</span></h1>
+        <p>Accedi con Steam, salva i tuoi giochi e avvia il boost multiplo oppure un preferito con un solo clic.</p>
+        <div class="hero-features">
+          <div><span class="feature-icon">✓</span><span>SteamID64 rilevato automaticamente</span></div>
+          <div><span class="feature-icon">✓</span><span>Nessuna Steam Web API key necessaria</span></div>
+          <div><span class="feature-icon">✓</span><span>Giochi e preferiti salvati per account</span></div>
+        </div>
+      </div>
+
+      <div class="login-panel-wrap">
+        <div id="loginPanel" class="login-panel">
+          <div class="login-panel-head">
+            <div class="steam-mark">S</div>
+            <div class="login-panel-title">
+              <div class="login-eyebrow">ACCESSO SICURO</div>
+              <h2>Accedi con Steam</h2>
+            </div>
+            <span class="secure-pill">PROTETTO</span>
+          </div>
+          <p class="login-intro">Controlla il tuo Raspberry da qualsiasi dispositivo. Usa credenziali Steam oppure il QR Code e conferma con Steam Guard.</p>
+
+          <div class="auth-method-switch" role="tablist" aria-label="Metodo di accesso">
+            <button id="passwordMethodBtn" class="auth-method active" type="button" role="tab" aria-selected="true"><span>◆</span><span>Nome e password</span></button>
+            <button id="qrMethodBtn" class="auth-method" type="button" role="tab" aria-selected="false"><span>▦</span><span>QR Code</span></button>
+          </div>
+
+          <form id="steamLoginForm">
+            <div class="field">
+              <label for="steamAccountName">Nome account Steam</label>
+              <div class="input-wrap"><span class="input-symbol">◎</span><input id="steamAccountName" class="input input-with-icon" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>
+            </div>
+            <div class="field">
+              <label for="steamPassword">Password Steam</label>
+              <div class="input-wrap"><span class="input-symbol">◆</span><input id="steamPassword" class="input input-with-icon" type="password" autocomplete="current-password" required></div>
+            </div>
+            <button id="loginBtn" class="btn primary full login-submit" type="submit"><span>Accedi con Steam</span><span>→</span></button>
+          </form>
+
+          <div id="qrLoginPanel" class="qr-login-panel hidden">
+            <div id="qrLoading" class="qr-loading"><span class="qr-spinner"></span><strong>Generazione QR Code...</strong></div>
+            <img id="steamQrImage" class="steam-qr hidden" alt="QR Code di accesso Steam">
+            <div class="qr-steps">
+              <strong>Apri l’app Steam</strong>
+              <span>Vai su Steam Guard, scansiona il QR e premi <b>Approva</b>.</span>
+            </div>
+            <button id="newQrBtn" class="btn ghost full" type="button">Genera un nuovo QR</button>
+          </div>
+
+          <div id="verificationPanel" class="verification-panel hidden">
+            <div class="guard-header">
+              <div class="guard-icon">✦</div>
+              <div><strong>Verifica Steam Guard</strong><span id="guardHint">Approva dall’app oppure inserisci il codice.</span></div>
+            </div>
+
+            <div id="approvalOption" class="approval-option hidden">
+              <div class="approval-phone">✓</div>
+              <div><strong>Approva dall’app Steam</strong><span>Apri la notifica Steam Guard e premi Approva. PiBoost rileva automaticamente la conferma.</span></div>
+            </div>
+
+            <div id="verificationDivider" class="verification-divider hidden"><span>oppure</span></div>
+
+            <form id="guardForm" class="hidden">
+              <div class="field">
+                <label id="guardCodeLabel" for="guardCode">Codice Steam Guard</label>
+                <input id="guardCode" class="input guard-code" autocomplete="one-time-code" inputmode="text" maxlength="8" placeholder="•••••">
+              </div>
+              <button id="guardSubmitBtn" class="btn primary full login-submit" type="submit">Conferma codice</button>
+            </form>
+
+            <button id="approvedBtn" class="btn secondary full hidden" type="button">Ho approvato nell’app</button>
+            <button id="backToLoginBtn" class="btn ghost full" type="button">Annulla e torna al login</button>
+          </div>
+
+          <div id="maintenanceGate" class="maintenance-gate hidden">
+            <div class="maintenance-icon">⚙</div>
+            <strong>Modalità manutenzione</strong>
+            <span id="maintenanceGateMessage">PiBoost è temporaneamente in manutenzione.</span>
+          </div>
+          <div id="loginStatus" class="login-status">Scegli un metodo di accesso.</div>
+          <button id="adminEntryBtn" class="admin-entry-btn hidden" type="button">Amministrazione</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><span class="logo"></span><span>PiBoost</span></div>
+      <div class="nav-label">Principale</div>
+      <button id="dashboardNavBtn" class="nav-item nav-button active" type="button"><span class="nav-icon">▣</span><span>Dashboard</span></button>
+      <button id="historyNavBtn" class="nav-item nav-button" type="button"><span class="nav-icon">◷</span><span>Storico</span></button>
+      <div class="nav-label">Libreria</div>
+      <button id="gamesNavBtn" class="nav-item nav-button" type="button"><span class="nav-icon">⌘</span><span>Giochi</span></button>
+      <button id="favoritesNavBtn" class="nav-item nav-button" type="button"><span class="nav-icon">★</span><span>Preferiti</span><span id="favoritesBadge" class="nav-badge">0</span></button>
+      <div class="sidebar-spacer"></div>
+      <div class="nav-label">Sistema</div>
+      <button id="adminNavBtn" class="nav-item nav-button admin-nav hidden" type="button"><span class="nav-icon">⚙</span><span>Amministrazione</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title"><span class="topbar-kicker">PANNELLO</span><strong>Steam Boost</strong></div>
+        <div class="topbar-actions">
+          <div id="profileMenu" class="profile-menu">
+            <button id="profileTrigger" class="profile-trigger" type="button" aria-haspopup="true" aria-expanded="false">
+              <img id="topAvatar" class="avatar" alt="Avatar Steam">
+              <span class="profile-text"><strong id="topName">Steam</strong><small>Account collegato</small></span>
+              <span class="profile-chevron">⌄</span>
+            </button>
+            <div class="profile-dropdown">
+              <div class="profile-dropdown-head">
+                <img id="menuAvatar" class="avatar avatar-large" alt="Avatar Steam">
+                <div><strong id="menuName">Steam</strong><small id="menuSteamId">SteamID64</small></div>
+              </div>
+              <label class="logout-keep-option" for="keepBoostOnLogout">
+                <span class="logout-switch-copy">
+                  <strong>Continua il boost dopo il logout</strong>
+                  <small>Esci solo dal pannello. Steam resta collegato sul Raspberry e il boost continua finché premi Stop o fai un logout completo.</small>
+                </span>
+                <span class="switch logout-switch">
+                  <input id="keepBoostOnLogout" type="checkbox">
+                  <span class="slider"></span>
+                </span>
+              </label>
+              <label class="logout-keep-option boot-start-option" for="autoStartBoostOnBoot">
+                <span class="logout-switch-copy">
+                  <strong>Avvia automaticamente il boost al riavvio del Raspberry</strong>
+                  <small>Riparte con l’ultimo tipo di boost scelto dopo il riavvio del Raspberry o del servizio PiBoost.</small>
+                </span>
+                <span class="switch logout-switch boot-switch">
+                  <input id="autoStartBoostOnBoot" type="checkbox">
+                  <span class="slider"></span>
+                </span>
+              </label>
+              <button id="logoutBtn" class="logout-menu-btn" type="button"><span>↪</span><span id="logoutBtnText">Log out completo</span></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="stats">
+        <div class="stat"><div class="stat-label">Piani attivi</div><div><span id="plansRunning" class="stat-value">0</span></div></div>
+        <div class="stat"><div class="stat-label">Giochi in boost</div><div><span id="gamesBoosting" class="stat-value">0</span></div></div>
+        <div class="stat"><div class="stat-label">Tempo sessione</div><div><span id="sessionTime" class="stat-value">0</span><span class="stat-unit">min.</span></div></div>
+        <div class="stat"><div class="stat-label">Totale boost</div><div><span id="totalTime" class="stat-value">0</span><span class="stat-unit">ore</span></div></div>
+      </section>
+
+      <section id="dashboardContent" class="content">
+        <div class="section-heading">
+          <div><div class="section-kicker">CONTROLLO SESSIONE</div><h2>Dashboard</h2></div>
+          <div class="section-actions">
+            <div id="boostModePill" class="mode-pill">Nessun boost</div>
+            <button id="settingsNavBtn" class="btn settings-content-btn" type="button">⚙ Impostazioni</button>
+          </div>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-head">
+            <div class="status"><span id="statusDot" class="dot"></span><span id="statusText">Fermato</span></div>
+            <div class="plan-tier"><span>Raspberry Pi 4</span><span>∞ ore</span></div>
+          </div>
+          <div class="plan-grid">
+            <div class="plan-col">
+              <label>Profilo Steam</label>
+              <div class="account"><img id="accountAvatar" class="avatar" alt="Avatar Steam"><span id="accountName">Non collegato</span></div>
+            </div>
+            <div class="plan-col"><label>SteamID64</label><div id="steamIdValue" class="value-link">Automatico</div></div>
+            <div class="plan-col"><label>Giochi salvati</label><div id="gamesValue">0 / 32</div></div>
+            <div class="plan-col"><label>Preferiti</label><div id="favoriteValue">0</div></div>
+            <div class="plan-col"><label>Uptime</label><div id="uptimeValue">--</div></div>
+            <div class="action-row">
+              <button id="startBtn" class="btn" type="button">▷ Avvia giochi</button>
+              <button id="stopBtn" class="btn danger" type="button">■ Stop</button>
+              <button id="gamesBtn" class="btn" type="button">⌘ Giochi</button>
+              <button id="favoritesBtn" class="btn favorite-btn" type="button">★ Preferiti</button>
+            </div>
+          </div>
+          <div class="preview-head"><span id="previewTitle">Giochi salvati</span><span id="previewCount">0</span></div>
+          <div id="activeGamesPreview" class="active-games-preview"></div>
+        </div>
+      </section>
+
+
+      <section id="historyContent" class="content history-page hidden">
+        <div class="section-heading history-page-heading">
+          <div><div class="section-kicker">LOG E STATISTICHE</div><h2>Storico boost</h2></div>
+          <button id="refreshHistoryBtn" class="btn" type="button">↻ Aggiorna storico</button>
+        </div>
+
+        <div class="history-summary-grid period-summary-grid">
+          <div class="history-summary-card period-card"><span>Oggi</span><strong id="historyTodayTime">0s</strong><small id="historyTimeZone">Fuso orario Europe/Rome</small></div>
+          <div class="history-summary-card period-card"><span>Questa settimana</span><strong id="historyWeekTime">0s</strong><small>Da lunedì a oggi</small></div>
+          <div class="history-summary-card period-card"><span>Questo mese</span><strong id="historyMonthTime">0s</strong><small>Dal primo giorno del mese</small></div>
+          <div class="history-summary-card"><span>Totale storico</span><strong id="historyTotalTime">0s</strong><small><b id="historySessionCount">0</b> sessioni · <b id="historyGameCount">0</b> giochi</small></div>
+        </div>
+
+        <div class="history-chart-grid">
+          <div class="history-chart-card">
+            <div class="history-section-head"><div><span class="section-kicker">ULTIMI 14 GIORNI</span><h3>Ore giornaliere</h3></div></div>
+            <div id="dailyHoursChart" class="chart-host" aria-label="Grafico ore giornaliere"></div>
+          </div>
+          <div class="history-chart-card">
+            <div class="history-section-head"><div><span class="section-kicker">CLASSIFICA</span><h3>Giochi più boostati</h3></div></div>
+            <div id="gameHoursChart" class="chart-host" aria-label="Grafico ore per gioco"></div>
+          </div>
+        </div>
+
+        <div class="history-section">
+          <div class="history-section-head"><div><span class="section-kicker">TOTALE</span><h3>Ore per gioco</h3></div><span id="gameTotalsCount" class="history-count">0 giochi</span></div>
+          <div id="gameTotalsList" class="game-totals-list"><div class="history-empty">Nessun gioco ancora registrato.</div></div>
+        </div>
+
+        <div class="history-section">
+          <div class="history-section-head"><div><span class="section-kicker">GIORNO PER GIORNO</span><h3>Boost giornaliero</h3></div><span id="dailyTotalsCount" class="history-count">0 giorni</span></div>
+          <div id="dailyTotalsList" class="daily-totals-list"><div class="history-empty">Nessun dato giornaliero.</div></div>
+        </div>
+
+        <div class="history-section">
+          <div class="history-section-head"><div><span class="section-kicker">ATTIVITÀ</span><h3>Log completo sessioni</h3></div><span id="sessionLogCount" class="history-count">0 sessioni</span></div>
+          <div id="sessionLogList" class="session-log-list"><div class="history-empty">Il log apparirà dopo il primo boost.</div></div>
+        </div>
+      </section>
+
+      <section id="settingsContent" class="content settings-page hidden">
+        <div class="section-heading settings-page-heading">
+          <div><div class="section-kicker">ACCOUNT E BOOST</div><h2>Impostazioni</h2></div>
+          <button id="settingsBackBtn" class="btn" type="button">← Torna alla dashboard</button>
+        </div>
+
+        <div class="settings-page-intro">
+          <div>
+            <strong>Configura il comportamento del tuo account</strong>
+            <span>Le modifiche vengono salvate solo per il profilo Steam attualmente collegato.</span>
+          </div>
+          <div class="settings-profile-chip"><span class="settings-profile-dot"></span><span id="settingsSteamName">Profilo Steam</span></div>
+        </div>
+
+        <div class="settings-page-grid">
+          <div class="settings-group">
+            <div class="settings-group-head"><span class="settings-group-icon">✎</span><div><strong>Presenza e messaggi</strong><span>Personalizza ciò che vedono gli amici.</span></div></div>
+            <div class="settings-card">
+              <div class="settings-row"><div><div class="settings-title">Titolo personalizzato in gioco</div><div class="settings-desc">Mostra un testo personalizzato mentre il boost è attivo.</div></div><label class="switch"><input id="customTitleEnabled" type="checkbox"><span class="slider"></span></label></div>
+              <input id="customTitle" class="input settings-input" maxlength="120" placeholder="PiBoost su Raspberry Pi">
+            </div>
+            <div class="settings-card">
+              <div class="settings-row"><div><div class="settings-title">Messaggio automatico</div><div class="settings-desc">Risponde al massimo una volta ogni 5 minuti per amico.</div></div><label class="switch"><input id="awayMessageEnabled" type="checkbox"><span class="slider"></span></label></div>
+              <textarea id="awayMessage" class="textarea settings-input" maxlength="300"></textarea>
+            </div>
+            <div class="settings-card">
+              <div class="settings-title">Aspetto Steam</div>
+              <div class="inline-fields"><select id="persona" class="select"><option>Online</option><option>Away</option><option>Invisible</option><option>Busy</option><option>LookingToPlay</option></select><select id="uiMode" class="select"><option>Normal</option><option>BigPicture</option><option>Mobile</option><option>VR</option></select></div>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <div class="settings-group-head"><span class="settings-group-icon">⚡</span><div><strong>Automazioni</strong><span>Gestisci arresto, ripresa e rotazione.</span></div></div>
+            <div class="settings-card"><div class="settings-row"><div><div class="settings-title">Riavvio automatico</div><div class="settings-desc">Riprende il boost dopo che smetti di giocare su un altro dispositivo. Non avvia il boost dopo un riavvio del Raspberry.</div></div><label class="switch"><input id="autoRestart" type="checkbox"><span class="slider"></span></label></div></div>
+            <div class="settings-card"><div class="settings-row"><div><div class="settings-title">Accetta richieste amici</div><div class="settings-desc">Accetta automaticamente le nuove richieste.</div></div><label class="switch"><input id="autoFriend" type="checkbox"><span class="slider"></span></label></div></div>
+            <div class="settings-card">
+              <div class="settings-row"><div><div class="settings-title">Stop automatico</div><div class="settings-desc">Ferma il boost dopo il numero di ore impostato.</div></div><label class="switch"><input id="autoStopEnabled" type="checkbox"><span class="slider"></span></label></div>
+              <input id="autoStopHours" class="input settings-input" type="number" min="0.05" max="720" step="0.25">
+            </div>
+            <div class="settings-card">
+              <div class="settings-row"><div><div class="settings-title">Card Farmer in rotazione</div><div class="settings-desc">Vale solo per i giochi multipli. Esegue un gioco alla volta e passa al successivo.</div></div><label class="switch"><input id="cardFarmer" type="checkbox"><span class="slider"></span></label></div>
+              <input id="cardCycleMinutes" class="input settings-input" type="number" min="5" max="1440" step="5">
+            </div>
+          </div>
+
+          <div class="settings-group settings-group-full">
+            <div class="settings-group-head"><span class="settings-group-icon">◎</span><div><strong>Profilo Steam</strong><span>Nome, avatar e SteamID64 vengono rilevati senza Steam Web API key.</span></div></div>
+            <div class="settings-card account-tools">
+              <div class="settings-desc">Aggiorna manualmente i dati pubblici del profilo quando cambi nome o avatar su Steam.</div>
+              <div class="account-tool-buttons"><button id="refreshProfileBtn" class="btn" type="button">Aggiorna nome e avatar</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-page-actions">
+          <button id="cancelSettingsBtn" class="btn" type="button">Annulla modifiche</button>
+          <button id="saveSettingsBtn" class="btn primary" type="button">Salva impostazioni</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="gamesModal" class="modal-backdrop hidden">
+    <div class="modal games-modal">
+      <div class="modal-head"><div><div class="modal-kicker">MODALITÀ MULTIPLA</div><div class="modal-title">Scegli i giochi</div></div><button class="close" data-close="gamesModal" type="button" aria-label="Chiudi">×</button></div>
+      <div class="modal-body">
+        <div class="modal-help">Ogni aggiunta o rimozione viene salvata automaticamente sul Raspberry. Questi giochi partono insieme con <strong>Avvia giochi</strong>.</div>
+        <div class="field">
+          <label for="gameSearch">Cerca per nome o AppID</label>
+          <input id="gameSearch" class="input" placeholder="es. Lethal Company oppure 1966720">
+          <div id="searchResults" class="search-results hidden"></div>
+        </div>
+        <div class="field">
+          <label>Selezionati</label>
+          <div id="selectedGames" class="selected-games"><span class="muted small">Nessun gioco selezionato</span></div>
+        </div>
+      </div>
+      <div class="modal-foot"><div><span id="gamesCounter" class="small muted">0 / 32</span><span id="gamesSaveStatus" class="small muted games-save-status">Salvato sul Raspberry</span></div><div><button class="btn" data-close="gamesModal" type="button">Chiudi</button> <button id="saveGamesBtn" class="btn primary" type="button">Salva ora</button></div></div>
+    </div>
+  </div>
+
+  <div id="favoritesModal" class="modal-backdrop hidden">
+    <div class="modal favorites-modal">
+      <div class="modal-head"><div><div class="modal-kicker">AVVIO RAPIDO</div><div class="modal-title">Preferiti</div></div><button class="close" data-close="favoritesModal" type="button" aria-label="Chiudi">×</button></div>
+      <div class="modal-body">
+        <div class="modal-help">Premi su un preferito per avviare solo quel gioco. Se ne scegli un altro, PiBoost ferma il precedente e avvia subito quello nuovo.</div>
+        <div id="favoritesList" class="favorites-list"></div>
+      </div>
+      <div class="modal-foot favorites-foot"><span id="favoritesCounter" class="small muted">0 preferiti</span><button class="btn" data-close="favoritesModal" type="button">Chiudi</button></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/steamboost/assets/app.js?v=4.1.0" defer></script>
+</body>
+</html>

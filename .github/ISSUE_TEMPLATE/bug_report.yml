@@ -1,0 +1,31 @@
+name: Segnalazione bug
+description: Segnala un problema riproducibile senza includere credenziali o token.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Non incollare password Steam, token, .env o file della cartella data."
+  - type: input
+    id: version
+    attributes:
+      label: Versione PiBoost
+      placeholder: 4.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrizione
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passaggi per riprodurre
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log ripuliti da dati sensibili

@@ -1,0 +1,37 @@
+{
+  "name": "piboost-raspberry",
+  "version": "4.1.0",
+  "private": true,
+  "description": "Dashboard self-hosted multiutente per Steam su Raspberry Pi, con persistenza, storico e pannello owner protetto da passkey.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "check": "node --check src/server.js && node --check src/multi-steam.js && node --check src/steam-account.js && node --check src/stats-utils.js && node --check src/account-registry.js && node --check src/session-store.js && node --check src/json-store.js && node --check src/crypto-vault.js && node --check src/owner-session.js && node --check src/admin-store.js && node --check src/system-status.js && node --check public/assets/app.js && node --check public/assets/admin.js && node --check src/passkey-store.js && node --check public/assets/owner-auth.js",
+    "test": "npm run check"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "5.2.1",
+    "helmet": "8.3.0",
+    "steam-user": "5.3.0",
+    "qrcode": "1.5.4",
+    "steam-session": "1.9.4",
+    "@simplewebauthn/server": "13.3.2"
+  },
+  "overrides": {
+    "steam-appticket": {
+      "protobufjs": "7.6.5"
+    }
+  },
+  "license": "MIT",
+  "keywords": [
+    "raspberry-pi",
+    "steam",
+    "dashboard",
+    "self-hosted",
+    "nodejs",
+    "webauthn"
+  ]
+}

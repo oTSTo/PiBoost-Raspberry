@@ -1,0 +1,11 @@
+[[redirects]]
+  from = "/steamboost"
+  to = "https://NOME-DISPOSITIVO.NOME-TAILNET.ts.net/steamboost/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/steamboost/*"
+  to = "https://NOME-DISPOSITIVO.NOME-TAILNET.ts.net/steamboost/:splat"
+  status = 200
+  force = true
