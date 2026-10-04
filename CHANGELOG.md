@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.1.1
+
+- avviso "Sessione Steam scaduta" quando Steam rifiuta l'accesso salvato (token
+  scaduto o revocato): stato dedicato `session_expired`, riquadro con il
+  pulsante per rifare l'accesso, conteggio in `/api/health` (`attention`) e
+  stato leggibile nel pannello owner;
+- `index.html` carica CSS e JS con percorsi relativi: funziona anche dietro un
+  reverse proxy che aggiunge un prefisso (es. `/raspberry/steamboost/`);
+- `package-lock.json` incluso nel repository (era citato nella 4.1.0 ma mancava).
+
 ## 4.1.0 — GitHub Release
 
 - repository ripulito da configurazioni personali;

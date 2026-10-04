@@ -901,6 +901,7 @@ async function saveBootPreference() {
 $('keepBoostOnLogout').addEventListener('change', saveLogoutPreference);
 $('autoStartBoostOnBoot').addEventListener('change', saveBootPreference);
 $('logoutBtn').addEventListener('click', logout);
+$('sessionReloginBtn').addEventListener('click', logout);
 $('profileTrigger').addEventListener('click', () => {
   updateLogoutModeUi();
   const menu = $('profileMenu');
@@ -1007,8 +1008,10 @@ function render(data) {
     if (avatar) img.src = avatar; else avatarFallback(img);
   }
 
+  const expired = data.connection === 'session_expired';
   const dot = $('statusDot');
-  dot.className = `dot${online ? ' online' : connecting ? ' connecting' : ''}`;
+  dot.className = `dot${online ? ' online' : connecting ? ' connecting' : expired ? ' expired' : ''}`;
+  $('sessionExpiredBanner').classList.toggle('hidden', !expired);
   $('statusText').textContent = maintenanceEnabled && !boosting ? (state.maintenance.message || 'Modalità manutenzione') : (boosting ? data.message : (data.message || 'Fermato'));
   $('startBtn').disabled = maintenanceEnabled || !online || !games.length || (boosting && data.boostMode === 'games');
   $('stopBtn').disabled = !boosting && !data.desiredBoosting;

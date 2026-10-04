@@ -89,7 +89,8 @@ class SteamAccount {
       activeFavoriteAppId: 0,
       startedAt: null,
       currentGameIndex: 0,
-      lastError: ''
+      lastError: '',
+      sessionExpiredAt: 0
     };
 
     this.pendingGuardCallback = null;
@@ -150,6 +151,7 @@ class SteamAccount {
       this.state.steamId64 = this.client.steamID ? this.client.steamID.getSteamID64() : '';
       this.state.message = 'Connesso a Steam';
       this.state.lastError = '';
+      this.state.sessionExpiredAt = 0;
 
       this.store.update((draft) => {
         draft.profile.accountName = this.accountName || draft.profile.accountName;
@@ -226,6 +228,19 @@ class SteamAccount {
         return;
       }
 
+      // Token scaduto o revocato (password cambiata, "disconnetti tutti i
+      // dispositivi" da Steam, token troppo vecchio): Steam non accettera' piu'
+      // questo accesso, serve un nuovo login. Il boost desiderato resta
+      // memorizzato e riparte dopo il nuovo accesso.
+      if (this.#isSessionExpiredError(error)) {
+        this.state.connection = 'session_expired';
+        this.state.sessionExpiredAt = this.state.sessionExpiredAt || Date.now();
+        this.state.lastError = message;
+        this.state.message = 'Sessione Steam scaduta: esci e accedi di nuovo (QR o password) per riprendere il boost.';
+        this.state.boosting = false;
+        return;
+      }
+
       this.state.connection = 'error';
       this.state.lastError = message;
       this.state.message = message;
@@ -298,6 +313,19 @@ class SteamAccount {
     ].filter((value) => Number.isFinite(Number(value))).map(Number);
     const message = error && error.message ? String(error.message) : String(error || '');
     return elsewhereResults.includes(result) || /LoggedInElsewhere|AlreadyLoggedInElsewhere|LogonSessionReplaced/i.test(message);
+  }
+
+  #isSessionExpiredError(error) {
+    const E = SteamUser.EResult || {};
+    const expired = [E.InvalidPassword, E.AccessDenied, E.Expired, E.Revoked, E.InvalidSignature]
+      .filter((value) => Number.isFinite(Number(value))).map(Number);
+    const result = Number(error && error.eresult);
+    const message = error && error.message ? String(error.message) : String(error || '');
+    return expired.includes(result) || /InvalidPassword|AccessDenied|Expired|Revoked|InvalidSignature/i.test(message);
+  }
+
+  needsAttention() {
+    return this.state.connection === 'session_expired' || this.state.connection === 'guard_required';
   }
 
   #scheduleSteamReconnect() {
@@ -385,7 +413,7 @@ class SteamAccount {
     try {
       const response = await fetch(`https://steamcommunity.com/profiles/${encodeURIComponent(steamId64)}?xml=1`, {
         signal: AbortSignal.timeout(7000),
-        headers: { 'User-Agent': 'PiBoost/4.1.0' }
+        headers: { 'User-Agent': 'PiBoost/4.1.1' }
       });
       if (!response.ok) return false;
       const xml = await response.text();

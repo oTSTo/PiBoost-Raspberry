@@ -336,6 +336,12 @@ body.login-active .login-screen { overscroll-behavior: none; }
 .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: 0 0 14px rgba(255,93,125,.6); }
 .dot.online { background: var(--green); box-shadow: 0 0 14px rgba(40,209,124,.6); }
 .dot.connecting { background: var(--yellow); box-shadow: 0 0 14px rgba(244,201,93,.6); }
+.dot.expired { background: var(--red); animation: dot-pulse 1.2s ease-in-out infinite; }
+@keyframes dot-pulse { 50% { opacity: .35; } }
+.session-banner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 4px; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255,93,125,.45); background: rgba(255,93,125,.08); font-size: 13px; line-height: 1.45; }
+.session-banner.hidden { display: none; }
+.session-banner strong { color: var(--red); }
+.session-banner span { flex: 1 1 260px; opacity: .9; }
 .plan-tier { display: flex; gap: 12px; align-items: center; color: #9db0c8; font-size: 12px; }
 .plan-grid { display: grid; grid-template-columns: 1.35fr 1fr .72fr .55fr .72fr auto; gap: 20px; align-items: center; padding: 22px 26px; }
 .plan-col { min-width: 0; }

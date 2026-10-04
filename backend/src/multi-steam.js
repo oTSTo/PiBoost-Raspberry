@@ -421,6 +421,14 @@ class MultiSteam {
     try { fs.rmSync(this.#accountDir(accountId), { recursive: true, force: true }); } catch (_error) {}
   }
 
+  // Account che non possono boostare finche' l'utente non rifa' l'accesso
+  // (sessione Steam scaduta o codice Steam Guard richiesto).
+  attentionCount() {
+    let count = 0;
+    for (const manager of this.accounts.values()) if (manager.needsAttention()) count += 1;
+    return count;
+  }
+
   connectSavedAll() {
     let delay = 0;
     for (const manager of this.accounts.values()) {

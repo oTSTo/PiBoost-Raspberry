@@ -142,7 +142,7 @@ function renderAccounts(accounts) {
   box.innerHTML = filtered.map((account) => `
     <article class="account-row">
       ${accountIdentity(account)}
-      <div><span class="state-pill ${account.boosting ? 'boosting' : account.connection === 'online' ? 'online' : ''}">${escapeHtml(account.boosting ? 'Boost attivo' : account.connection)}</span><div class="muted">${account.gamesCount} giochi · ${account.favoritesCount} preferiti</div></div>
+      <div><span class="state-pill ${account.boosting ? 'boosting' : account.connection === 'online' ? 'online' : ''}">${escapeHtml(account.boosting ? 'Boost attivo' : ({ session_expired: 'Sessione scaduta', guard_required: 'Steam Guard richiesto' }[account.connection] || account.connection))}</span><div class="muted">${account.gamesCount} giochi · ${account.favoritesCount} preferiti</div></div>
       <div><strong>${fmtDuration(account.totalSeconds)}</strong><div class="muted">Totale registrato · ${fmtDate(account.lastModifiedAt)}</div></div>
       <div class="row-actions"><button class="btn" data-details="${escapeHtml(account.id)}" type="button">Apri</button><button class="btn danger" data-stop="${escapeHtml(account.id)}" type="button" ${account.boosting ? '' : 'disabled'}>Stop</button><button class="btn" data-disconnect="${escapeHtml(account.id)}" type="button">Disconnetti</button><button class="btn danger" data-delete="${escapeHtml(account.id)}" data-name="${escapeHtml(account.personaName || account.accountName)}" type="button">Elimina</button></div>
     </article>`).join('');

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>PiBoost · Steam Hour Booster</title>
-  <link rel="stylesheet" href="/steamboost/assets/app.css?v=4.1.0">
+  <link rel="stylesheet" href="./assets/app.css?v=4.1.1">
 </head>
 <body class="login-active">
   <section id="loginScreen" class="login-screen">
@@ -176,6 +176,11 @@
             <div class="status"><span id="statusDot" class="dot"></span><span id="statusText">Fermato</span></div>
             <div class="plan-tier"><span>Raspberry Pi 4</span><span>∞ ore</span></div>
           </div>
+          <div id="sessionExpiredBanner" class="session-banner hidden">
+            <strong>Sessione Steam scaduta.</strong>
+            <span>Steam non accetta più l'accesso salvato (succede se cambi password, se scolleghi i dispositivi o dopo molto tempo). Esci e accedi di nuovo con QR o password: giochi, preferiti e statistiche restano salvati e il boost riparte.</span>
+            <button id="sessionReloginBtn" class="btn" type="button">Esci e accedi di nuovo</button>
+          </div>
           <div class="plan-grid">
             <div class="plan-col">
               <label>Profilo Steam</label>
@@ -331,6 +336,6 @@
   </div>
 
   <div id="toast" class="toast hidden"></div>
-  <script src="/steamboost/assets/app.js?v=4.1.0" defer></script>
+  <script src="./assets/app.js?v=4.1.1" defer></script>
 </body>
 </html>

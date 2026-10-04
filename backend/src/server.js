@@ -11,7 +11,7 @@ const { AdminStore } = require('./admin-store');
 const { PasskeyStore } = require('./passkey-store');
 const { systemStatus } = require('./system-status');
 
-const VERSION = '4.1.0';
+const VERSION = '4.1.1';
 const OWNER_COOKIE = 'piboost_owner';
 
 function loadEnv(file) {
@@ -320,6 +320,7 @@ function createApiRouter() {
     service: 'PiBoost MultiUser Favorites',
     version: VERSION,
     ownerConfigured: ownerConfigured(),
+    attention: multi.attentionCount(),
     time: new Date().toISOString()
   }));
 

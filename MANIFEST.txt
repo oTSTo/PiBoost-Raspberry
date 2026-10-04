@@ -23,6 +23,7 @@ VERIFICA-GIOCHI.sh
 VERIFICA.sh
 backend/.env.example
 backend/data/.gitkeep
+backend/package-lock.json
 backend/package.json
 backend/public/admin.html
 backend/public/assets/admin.css
