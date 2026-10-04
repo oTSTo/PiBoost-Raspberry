@@ -23,7 +23,8 @@
   "overrides": {
     "steam-appticket": {
       "protobufjs": "7.6.5"
-    }
+    },
+    "adm-zip": "0.6.1"
   },
   "license": "MIT",
   "keywords": [

@@ -9,6 +9,9 @@
 - `index.html` carica CSS e JS con percorsi relativi: funziona anche dietro un
   reverse proxy che aggiunge un prefisso (es. `/raspberry/steamboost/`);
 - `package-lock.json` incluso nel repository (era citato nella 4.1.0 ma mancava).
+- dipendenze senza vulnerabilita' note (`npm audit`): aggiornati `ip-address` e
+  `qs`, `adm-zip` forzato alla 0.6.1 con un override (steam-user lo usa solo per i
+  download dal CDN di Steam, che PiBoost non fa).
 
 ## 4.1.0 — GitHub Release
 
