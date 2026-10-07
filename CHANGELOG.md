@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.2
+
+- `proxy-addr` 2.0.8 (dipendenza di Express): corregge GHSA-jqcg-44mw-7w3h, IP
+  falsificabile con `X-Forwarded-For` quando il proxy fidato e' indicato come
+  sottorete IPv6/IPv4-mapped. PiBoost usa `trust proxy 1` e non era esposto,
+  ma `npm audit` la segnalava come critica.
+
 ## 4.1.1
 
 - avviso "Sessione Steam scaduta" quando Steam rifiuta l'accesso salvato (token
