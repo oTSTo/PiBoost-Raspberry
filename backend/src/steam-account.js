@@ -413,7 +413,7 @@ class SteamAccount {
     try {
       const response = await fetch(`https://steamcommunity.com/profiles/${encodeURIComponent(steamId64)}?xml=1`, {
         signal: AbortSignal.timeout(7000),
-        headers: { 'User-Agent': 'PiBoost/4.1.2' }
+        headers: { 'User-Agent': 'PiBoost/4.2.0' }
       });
       if (!response.ok) return false;
       const xml = await response.text();

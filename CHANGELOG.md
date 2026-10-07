@@ -1,5 +1,24 @@
 # Changelog
 
+## 4.2.0
+
+Interfaccia nuova ispirata alla libreria di Steam (Big Picture); stesse funzioni,
+stesse API, nessuna modifica al backend.
+
+- dashboard con riquadro grande del gioco in boost (immagine `library_hero` del
+  gioco), tempo di boost, pulsante verde "Avvia giochi" e copertine verticali
+  (`library_600x900`) dei giochi attivi o salvati; se un gioco non ha queste
+  immagini si usa quella orizzontale;
+- preferiti avviabili con un clic direttamente dalla dashboard;
+- menu in alto (in basso sul telefono) con Dashboard, Giochi, Preferiti,
+  Storico, Impostazioni e Amministrazione;
+- accesso, storico, impostazioni, finestre, console owner e pagina passkey con
+  la stessa palette; icone SVG incluse nella pagina;
+- nessuna risorsa esterna oltre alle immagini del CDN di Steam già consentite
+  dalla Content Security Policy (font di sistema, niente stili inline);
+- le copertine si ridisegnano solo quando cambia l'elenco dei giochi, non a ogni
+  aggiornamento dello stato.
+
 ## 4.1.2
 
 - `proxy-addr` 2.0.8 (dipendenza di Express): corregge GHSA-jqcg-44mw-7w3h, IP

@@ -11,7 +11,7 @@ const { AdminStore } = require('./admin-store');
 const { PasskeyStore } = require('./passkey-store');
 const { systemStatus } = require('./system-status');
 
-const VERSION = '4.1.2';
+const VERSION = '4.2.0';
 const OWNER_COOKIE = 'piboost_owner';
 
 function loadEnv(file) {

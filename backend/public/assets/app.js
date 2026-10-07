@@ -925,39 +925,135 @@ function favoriteByAppid(appid) {
     : null;
 }
 
+// Immagini della libreria Steam (copertina verticale, sfondo grande): non tutti i
+// giochi le hanno, quindi si ripiega sull'immagine orizzontale e poi sul segnaposto.
+function steamArt(appid, kind) {
+  return `https://cdn.cloudflare.steamstatic.com/steam/apps/${Number(appid)}/${kind}.jpg`;
+}
+
+function artImage(game, kind) {
+  const img = document.createElement('img');
+  img.alt = game.name || '';
+  img.loading = 'lazy';
+  img.src = steamArt(game.appid, kind);
+  img.onerror = () => {
+    img.onerror = () => gameFallback(img, game.appid);
+    img.src = game.image || steamArt(game.appid, 'header');
+  };
+  return img;
+}
+
+// Il polling ridisegna ogni 2,5 s: le copertine si ricreano solo se cambia qualcosa,
+// altrimenti le immagini lampeggiano.
+function sameContent(box, signature) {
+  if (box.dataset.sig === signature) return true;
+  box.dataset.sig = signature;
+  return false;
+}
+
 function renderActiveGames(games, active = false) {
   const box = $('activeGamesPreview');
+  if (sameContent(box, `${active}|${games.map((game) => game.appid).join(',')}`)) return;
   box.replaceChildren();
   if (!games.length) {
-    const empty = document.createElement('span');
-    empty.className = 'muted small';
-    empty.textContent = active ? 'Nessun gioco attivo' : 'Nessun gioco salvato';
+    const empty = document.createElement('div');
+    empty.className = 'shelf-empty';
+    empty.textContent = active ? 'Nessun gioco attivo' : 'Nessun gioco salvato: apri Giochi e aggiungine qualcuno.';
     box.append(empty);
     return;
   }
-  for (const game of games.slice(0, 10)) {
+  for (const game of games.slice(0, 12)) {
     const card = document.createElement('div');
-    card.className = `mini-game-card${active ? ' active' : ''}`;
-    const img = document.createElement('img');
-    img.src = game.image || `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.appid}/header.jpg`;
-    img.alt = game.name;
-    img.onerror = () => gameFallback(img, game.appid);
-    const name = document.createElement('span');
-    name.textContent = game.name;
-    card.append(img, name);
+    card.className = `capsule${active ? ' active' : ''}`;
+    card.title = `${game.name} · AppID ${game.appid}`;
+    const art = document.createElement('div');
+    art.className = 'capsule-art';
+    art.append(artImage(game, 'library_600x900'));
     if (active) {
       const tag = document.createElement('div');
       tag.className = 'active-tag';
-      tag.textContent = 'Attivo';
-      card.append(tag);
+      tag.textContent = 'In boost';
+      art.append(tag);
     }
+    const name = document.createElement('span');
+    name.className = 'capsule-name';
+    name.textContent = game.name;
+    card.append(art, name);
     box.append(card);
   }
-  if (games.length > 10) {
-    const more = document.createElement('div');
-    more.className = 'more-games';
-    more.textContent = `+${games.length - 10}`;
+  if (games.length > 12) {
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'capsule capsule-more';
+    more.textContent = `+${games.length - 12}`;
+    more.addEventListener('click', openGames);
     box.append(more);
+  }
+}
+
+// Riquadro in alto: immagine grande del gioco in boost (o del primo salvato).
+function renderSpotlight(data, previewGames) {
+  const boosting = Boolean(data.boosting);
+  const first = previewGames[0];
+  const art = $('heroArt');
+  const key = first ? String(first.appid) : '';
+  if (art.dataset.appid !== key) {
+    art.dataset.appid = key;
+    if (first) {
+      art.classList.remove('hidden');
+      art.onerror = () => {
+        art.onerror = () => art.classList.add('hidden');
+        art.src = first.image || steamArt(first.appid, 'header');
+      };
+      art.src = steamArt(first.appid, 'library_hero');
+    } else {
+      art.classList.add('hidden');
+      art.removeAttribute('src');
+    }
+  }
+  let title = 'Pronto per il boost';
+  if (boosting && data.boostMode === 'favorite' && first) title = first.name;
+  else if (boosting) title = `${previewGames.length} ${previewGames.length === 1 ? 'gioco' : 'giochi'} in boost`;
+  else if (!previewGames.length) title = 'Aggiungi i tuoi giochi';
+  $('heroTitle').textContent = title;
+  $('dashboardContent').classList.toggle('is-boosting', boosting);
+}
+
+// Preferiti in dashboard: avvio con un clic, stesso comportamento della finestra.
+function renderDashFavorites() {
+  const box = $('dashFavorites');
+  if (!box || !state.data) return;
+  const favorites = state.data.favorites || [];
+  const runningId = state.data.boosting && state.data.boostMode === 'favorite' ? Number(state.data.activeFavoriteAppId) : 0;
+  if (sameContent(box, `${runningId}|${favorites.map((game) => game.appid).join(',')}`)) return;
+  box.replaceChildren();
+  if (!favorites.length) {
+    const empty = document.createElement('div');
+    empty.className = 'shelf-empty';
+    empty.textContent = 'Nessun preferito: in Giochi premi la stella accanto a un titolo.';
+    box.append(empty);
+    return;
+  }
+  for (const game of favorites) {
+    const running = runningId === Number(game.appid);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = `fav-tile${running ? ' running' : ''}`;
+    card.dataset.startFavorite = game.appid;
+    card.title = running ? `${game.name}: boost attivo` : `Avvia solo ${game.name}`;
+    const img = document.createElement('img');
+    img.alt = game.name;
+    img.loading = 'lazy';
+    img.src = game.image || steamArt(game.appid, 'header');
+    img.onerror = () => gameFallback(img, game.appid);
+    const label = document.createElement('span');
+    label.className = 'fav-tile-label';
+    label.textContent = running ? 'In boost' : 'Avvia';
+    const name = document.createElement('span');
+    name.className = 'fav-tile-name';
+    name.textContent = game.name;
+    card.append(img, label, name);
+    box.append(card);
   }
 }
 
@@ -1022,22 +1118,23 @@ function render(data) {
   const pill = $('boostModePill');
   pill.className = 'mode-pill';
   if (boosting && data.boostMode === 'favorite') {
-    const game = activeGames[0];
     pill.classList.add('favorite');
-    pill.textContent = `★ Preferito${game ? ` · ${game.name}` : ''}`;
+    pill.textContent = 'Preferito';
   } else if (boosting && data.boostMode === 'games') {
     pill.classList.add('games');
-    pill.textContent = `⌘ Giochi multipli · ${activeGames.length}`;
+    pill.textContent = `Giochi multipli · ${activeGames.length}`;
   } else {
     pill.textContent = 'Nessun boost';
   }
-
+  if ($('dashGamesBtn')) $('dashGamesBtn').disabled = maintenanceEnabled;
 
   const previewGames = boosting ? activeGames : games;
-  $('previewTitle').textContent = boosting ? 'Giochi attivi' : 'Giochi salvati';
+  $('previewTitle').textContent = boosting ? 'In boost adesso' : 'Giochi salvati';
   $('previewCount').textContent = String(previewGames.length);
   renderActiveGames(previewGames, boosting);
+  renderSpotlight(data, previewGames);
   renderFavorites();
+  renderDashFavorites();
 }
 
 async function refresh({ bootstrap = false } = {}) {
@@ -1113,6 +1210,7 @@ function openSettings() {
 
 $('gamesBtn').addEventListener('click', openGames);
 $('gamesNavBtn').addEventListener('click', openGames);
+$('dashGamesBtn').addEventListener('click', openGames);
 $('favoritesBtn').addEventListener('click', openFavorites);
 $('favoritesNavBtn').addEventListener('click', openFavorites);
 $('historyNavBtn').addEventListener('click', openHistory);

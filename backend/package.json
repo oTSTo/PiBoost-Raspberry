@@ -1,6 +1,6 @@
 {
   "name": "piboost-raspberry",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "private": true,
   "description": "Dashboard self-hosted multiutente per Steam su Raspberry Pi, con persistenza, storico e pannello owner protetto da passkey.",
   "main": "src/server.js",
